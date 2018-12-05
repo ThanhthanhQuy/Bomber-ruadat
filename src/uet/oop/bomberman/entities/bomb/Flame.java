@@ -97,6 +97,7 @@ public class Flame extends Entity {
 				y1 = yOrigin - i - 1;
 			}
 			if (x1 >= 0 && y1 >= 0) {
+				System.out.println(x1+" "+y1);
 				t = _board.getEntityAt(x1, y1);
 				if (t instanceof LayeredEntity) {
 					t.collide(new FlameSegment(x1, y1, _direction, last));// tao gia 1 flame de va cham

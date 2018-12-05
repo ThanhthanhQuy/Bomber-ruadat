@@ -8,6 +8,7 @@ import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
+import uet.oop.bomberman.entities.character.enemy.Doll;
 import uet.oop.bomberman.entities.character.enemy.Kondoria;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
 import uet.oop.bomberman.entities.tile.Grass;
@@ -16,6 +17,7 @@ import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.entities.tile.destroyable.Brick;
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
+import uet.oop.bomberman.entities.tile.item.HeartItem;
 import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.Screen;
@@ -124,6 +126,16 @@ public class FileLevelLoader extends LevelLoader {
 							)
 					);
 				}
+				//heart
+				else if(_map[x][y]==104) {
+					_board.addEntity(pos,
+							new LayeredEntity(x, y,
+									new Grass(x,y,Sprite.grass),
+									new HeartItem(x, y, Sprite.powerup_detonator),
+									new Brick(x, y, Sprite.brick,_board)
+							)
+					);
+				}
 				else if(_map[x][y]==111) {
 					_board.addEntity(pos, new Brick(x, y, Sprite.brick,_board));
 
@@ -146,19 +158,25 @@ public class FileLevelLoader extends LevelLoader {
 							)
 					);
 				}
+				else if(_map[x][y]==107) {
+					_board.addCharacter(new Kondoria(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+					_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+				}
+				else if(_map[x][y]==100) {
+					_board.addCharacter(new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+					_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+				}
+				else if(_map[x][y]==112) {
+					_board.addCharacter( new Bomber(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board) );
+					Screen.setOffset(0, 0);
+					_board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass)); // chèn thêm glass dưới chân bomber
+				}
 				else {
 					_board.addEntity(pos, new Grass(x, y, Sprite.grass));
 				}
 				System.out.println("\n");
 			}
 		}
-
-		// thêm Bomber
-		int xBomber = 3, yBomber = 1;
-		// add 1 con bomber mặc định đứng sang phải
-		_board.addCharacter( new Bomber(Coordinates.tileToPixel(xBomber), Coordinates.tileToPixel(yBomber) + Game.TILES_SIZE, _board) );
-		Screen.setOffset(0, 0);
-		_board.addEntity(xBomber + yBomber * _width, new Grass(xBomber, yBomber, Sprite.grass)); // chèn thêm glass dưới chân bomber
 
 		// thêm Enemy
 		Random rd= new Random();
@@ -174,9 +192,6 @@ public class FileLevelLoader extends LevelLoader {
 
 
 			_board.addEntity(xE1 + yE1 * _width, new Grass(xE1, yE1, Sprite.grass));
-		}
-		for(int i=0;i< Game.getKonSize();i++) {
-			_board.addCharacter(new Kondoria(Coordinates.tileToPixel(5), Coordinates.tileToPixel(5) + Game.TILES_SIZE, _board));
 		}
 
 	}

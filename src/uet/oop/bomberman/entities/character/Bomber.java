@@ -34,8 +34,8 @@ import javax.swing.JPanel;
 public class Bomber extends Character {
     private List<Bomb> _bombs;
     protected Keyboard _input;
-    public static boolean _movin2 =true;
-
+    public static int _heart;
+    int t=0;
     /**
      * nếu giá trị này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
      * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
@@ -47,7 +47,10 @@ public class Bomber extends Character {
         _bombs = _board.getBombs();
         _input = _board.getInput();
         _sprite = Sprite.player_right;
+        _heart= Game.getHeart();
+        _moving=false;
     }
+
 
     @Override
     public void update() {
@@ -70,6 +73,7 @@ public class Bomber extends Character {
 
     @Override
     public void render(Screen screen) {
+
         calculateXOffset();
 
         if (_alive)
@@ -108,7 +112,6 @@ public class Bomber extends Character {
                 _timeBetweenPutBombs=30;
         }
 
-
     }
 
     protected void placeBomb(int x, int y) {
@@ -134,7 +137,7 @@ public class Bomber extends Character {
 
     @Override
     public void kill() {
-        if (!_alive) return;
+        if (!_alive ) return;
         _alive = false;
     }
 
@@ -149,11 +152,12 @@ public class Bomber extends Character {
     @Override
     protected void calculateMove() {
         int _x1=0, _y1=0;
-        if(_input.up) { _direction =5;_y1--; }
-        else if(_input.down) { _direction =7;_y1++;}
-        else if(_input.right) { _direction =6;_x1++;}
-        else if (_input.left){_direction =8;_x1--;}
-        else if(_input.space) { _direction=9;}
+        if(_input.up) { _direction =5;_y1--;_moving=true; }
+        else if(_input.down) { _direction =7;_y1++;_moving=true;}
+        else if(_input.right) { _direction =6;_x1++;_moving=true;}
+        else if (_input.left){_direction =8;_x1--;_moving=true;}
+        else if(_input.space) { _direction=9;_moving=false;}
+        else {_moving=false;}
         move(_x1*Game.getBomberSpeed(), _y1* Game.getBomberSpeed());
 
 
@@ -188,9 +192,13 @@ public class Bomber extends Character {
 
     @Override
     public boolean collide(Entity e) {
-      if(e instanceof Enemy || e instanceof FlameSegment || e.getSprite()== Sprite.bomb_exploded1) { kill(); return false;}
-      if(e.getSprite()== Sprite.grass || e instanceof Bomb ) { return true;}
-      if(e instanceof LayeredEntity) {  return e.collide(this);}
+      if(e instanceof Enemy || e instanceof FlameSegment || e.getSprite()== Sprite.bomb_exploded1) {
+          if(t==0) { _heart=_heart-1;};
+          t++;
+          return true;}
+        if(_heart==0) {kill();return false;}
+      if(e.getSprite()== Sprite.grass || e instanceof Bomb ) {t=0; return true;}
+      if(e instanceof LayeredEntity) { t=0; return e.collide(this);}
         return false;
     }
 
@@ -198,26 +206,26 @@ public class Bomber extends Character {
             switch (this._direction) {
                 case 5:
                     _sprite = Sprite.player_up;
-                    if (_movin2) {
+                    if (_moving) {
                         _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2, _animate, 30);
                     }
                     break;
                 case 6:
                     _sprite = Sprite.player_right;
-                    if (_movin2) {
+                    if (_moving) {
                         _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 30);
                     }
                     break;
                 case 7:
                     _sprite = Sprite.player_down;
-                    if (_movin2 ) {
+                    if (_moving ) {
                         _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, _animate, 30);
                     }
                     break;
                 case 8:
 
                     _sprite = Sprite.player_left;
-                    if (_movin2) {
+                    if (_moving) {
                         _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2, _animate, 30);
                     }
                     break;
