@@ -19,7 +19,7 @@ public class Doll extends Enemy {
     protected Flame[] _flames;
     boolean _exploded = false;
     Random t= new Random();
-    int _timeToExplode =120+t.nextInt(2000) ;
+    int _timeToExplode =120+t.nextInt(500) ;
         int _timeAfter1=20;
     public Doll(int x, int y, Board board) {
         super(x, y, board, Sprite.doll_dead, Game.getBomberSpeed() / 2, 100);
